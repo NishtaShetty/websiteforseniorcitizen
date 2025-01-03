@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Scheduling{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="service-page-header">
+        <div class="service-page-title">
+            <i class="fas fa-calendar-alt"></i>
+            <div>
+                <h1>Appointment Scheduling</h1>
+                <p>Manage your healthcare appointments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="appointments-grid">
+        <div class="calendar-section">
+            <div class="section-header">
+                <h2><i class="fas fa-calendar-week"></i> Calendar View</h2>
+                <button onclick="showAddAppointmentModal()" class="add-appointment-btn">
+                    <i class="fas fa-plus"></i> New Appointment
+                </button>
+            </div>
+            <div id="calendar"></div>
+        </div>
+
+        <div class="upcoming-appointments">
+            <div class="section-header">
+                <h2><i class="fas fa-clock"></i> Upcoming Appointments</h2>
+            </div>
+            {% if appointments %}
+                <div class="appointments-list">
+                    {% for appointment in appointments %}
+                    <div class="appointment-card {% if appointment.date < now %}past{% endif %}">
+                        <div class="appointment-header">
+                            <h3>{{ appointment.title }}</h3>
+                            <span class="appointment-date">
+                                {{ appointment.date.strftime('%B %d, %Y') }}
+                            </span>
+                        </div>
+                        <div class="appointment-details">
+                            <p><i class="fas fa-user-md"></i> Dr. {{ appointment.doctor }}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> {{ appointment.location }}</p>
+                            <p><i class="fas fa-clock"></i> {{ appointment.date.strftime('%I:%M %p') }}</p>
+                            {% if appointment.notes %}
+                            <p class="appointment-notes">
+                                <i class="fas fa-sticky-note"></i> {{ appointment.notes }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="appointment-actions">
+                            <button onclick="editAppointment('{{ appointment.id }}')" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deleteAppointment('{{ appointment.id }}')" class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h3>No appointments scheduled</h3>
+                    <p>Click the "New Appointment" button to schedule your first appointment</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Appointment Modal -->
+<div id="appointmentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-calendar-plus"></i> Schedule Appointment</h2>
+            <button type="button" class="voice-input-btn" onclick="startVoiceInput()">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button type="button" class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="appointmentForm" onsubmit="saveAppointment(event)">
+            <input type="hidden" id="appointment-id" name="appointment_id">
+            
+            <div class="form-group">
+                <label for="appointment-title">
+                    <i class="fas fa-heading"></i> Title
+                </label>
+                <input type="text" id="appointment-title" name="title" required 
+                       placeholder="e.g., Annual Checkup">
+            </div>
+            
+            <div class="form-group">
+                <label for="appointment-doctor">
+                    <i class="fas fa-user-md"></i> Doctor
+                </label>
+                <input type="text" id="appointment-doctor" name="doctor" required
+                       placeholder="Doctor's name">
+            </div>
+            
+            <div class="form-group">
+                <label for="appointment-location">
+                    <i class="fas fa-map-marker-alt"></i> Location
+                </label>
+                <input type="text" id="appointment-location" name="location" required
+                       placeholder="Clinic/Hospital address">
+            </div>
+            
+            <div class="form-group">
+                <label for="appointment-date">
+                    <i class="fas fa-calendar-alt"></i> Date & Time
+                </label>
+                <input type="datetime-local" id="appointment-date" name="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="appointment-notes">
+                    <i class="fas fa-sticky-note"></i> Notes (Optional)
+                </label>
+                <textarea id="appointment-notes" name="notes" rows="3"
+                          placeholder="Any additional notes or instructions"></textarea>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="submit" class="save-btn">
+                    <i class="fas fa-save"></i> Save Appointment
+                </button>
+                <button type="button" class="cancel-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/appointments.js') }}"></script>
+{% endblock %}
+

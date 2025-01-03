@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <h1>Welcome, 
+        {{ user.username if user else 'Guest' }}
+    </h1>
+    <p>Choose from our available services below</p>
+</div>
+
+<div class="service-grid">
+    <a href="{{ url_for('medication_reminder') }}" class="service-card medication">
+        <i class="fas fa-pills"></i>
+        <h2>Medication Reminder</h2>
+        <p>Track and manage your medications</p>
+    </a>
+
+    <a href="{{ url_for('appointment_scheduling') }}" class="service-card appointments">
+        <i class="fas fa-calendar-alt"></i>
+        <h2>Appointment Scheduling</h2>
+        <p>Manage your doctor appointments</p>
+    </a>
+
+    <a href="{{ url_for('transportation') }}" class="service-card transport">
+        <i class="fas fa-car"></i>
+        <h2>Transportation</h2>
+        <p>Book rides to appointments</p>
+    </a>
+
+    <a href="{{ url_for('emergency') }}" class="service-card emergency">
+        <i class="fas fa-ambulance"></i>
+        <h2>Emergency Support</h2>
+        <p>Quick access to emergency help</p>
+    </a>
+</div>
+{% endblock %} 

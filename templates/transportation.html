@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Transportation Assistance{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="service-page-header">
+        <div class="service-page-title">
+            <i class="fas fa-car"></i>
+            <div>
+                <h1>Transportation Assistance</h1>
+                <p>Schedule reliable rides to your medical appointments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="transport-grid">
+        <!-- Request Ride Form -->
+        <div class="transport-form-card">
+            <div class="card-header">
+                <h2><i class="fas fa-taxi"></i> Request Transportation</h2>
+                <button type="button" class="voice-input-btn" onclick="startVoiceInput()" title="Click to start voice input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            
+            <form id="transportForm" onsubmit="submitTransportRequest(event)">
+                <div class="form-group">
+                    <label for="pickup-location">
+                        <i class="fas fa-map-marker-alt"></i> Pickup Location
+                    </label>
+                    <input type="text" id="pickup-location" name="pickup_location" required
+                           placeholder="Enter your pickup address">
+                </div>
+
+                <div class="form-group">
+                    <label for="destination">
+                        <i class="fas fa-hospital"></i> Destination
+                    </label>
+                    <input type="text" id="destination" name="destination" required
+                           placeholder="Enter hospital/clinic address">
+                </div>
+
+                <div class="form-group">
+                    <label for="pickup-time">
+                        <i class="fas fa-clock"></i> Pickup Time
+                    </label>
+                    <input type="datetime-local" id="pickup-time" name="pickup_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="special-needs">
+                        <i class="fas fa-wheelchair"></i> Special Requirements
+                    </label>
+                    <textarea id="special-needs" name="special_needs" rows="3"
+                              placeholder="Any special needs or requirements (wheelchair access, etc.)"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-car"></i> Request Ride
+                </button>
+            </form>
+        </div>
+
+        <!-- Previous Rides -->
+        <div class="previous-rides-card">
+            <div class="card-header">
+                <h2><i class="fas fa-history"></i> Previous Rides</h2>
+            </div>
+            
+            <div class="rides-list">
+                {% if rides %}
+                    {% for ride in rides %}
+                    <div class="ride-card">
+                        <div class="ride-status {{ ride.status }}">
+                            <span class="status-badge">{{ ride.status|title }}</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-route">
+                                <p><i class="fas fa-map-marker-alt"></i> From: {{ ride.pickup_location }}</p>
+                                <p><i class="fas fa-hospital"></i> To: {{ ride.destination }}</p>
+                            </div>
+                            <p><i class="fas fa-clock"></i> {{ ride.pickup_time.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                            {% if ride.special_needs %}
+                            <p class="special-needs-note">
+                                <i class="fas fa-wheelchair"></i> {{ ride.special_needs }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-car-side"></i>
+                        <h3>No Previous Rides</h3>
+                        <p>Your ride history will appear here</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/transportation.js') }}"></script>
+{% endblock %} 

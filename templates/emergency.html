@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Emergency Support{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="service-page-header">
+        <div class="service-page-title">
+            <i class="fas fa-ambulance"></i>
+            <div>
+                <h1>Emergency Support</h1>
+                <p>Quick access to emergency assistance</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="emergency-grid">
+        <!-- SOS Button Section -->
+        <div class="sos-section">
+            <button id="sosButton" class="sos-button" onclick="triggerEmergency()">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>SOS</span>
+            </button>
+            <p class="sos-description">Press for immediate emergency assistance</p>
+            <p class="sos-info">This will alert all your emergency contacts with your current location</p>
+        </div>
+
+        <!-- Emergency Contacts Section -->
+        <div class="contacts-section">
+            <div class="section-header">
+                <h2><i class="fas fa-phone-alt"></i> Emergency Contacts</h2>
+                <button onclick="showAddContactModal()" class="add-contact-btn">
+                    <i class="fas fa-plus"></i> Add Contact
+                </button>
+            </div>
+
+            <div class="contacts-list">
+                {% if emergency_contacts %}
+                    {% for contact in emergency_contacts %}
+                    <div class="contact-card">
+                        <div class="contact-info">
+                            <h3><i class="fas fa-user"></i> {{ contact.name }}</h3>
+                            <p><i class="fas fa-phone"></i> {{ contact.phone }}</p>
+                            <p><i class="fas fa-user-tag"></i> {{ contact.relationship }}</p>
+                        </div>
+                        <div class="contact-actions">
+                            <button onclick="editContact('{{ contact.id }}')" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteContact('{{ contact.id }}')" class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-address-book"></i>
+                        <h3>No Emergency Contacts Added</h3>
+                        <p>Add emergency contacts to enable quick assistance</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Contact Modal -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-plus"></i> Add Emergency Contact</h2>
+            <button type="button" class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="contactForm" onsubmit="saveContact(event)">
+            <input type="hidden" id="contact-id" name="contact_id">
+            
+            <div class="form-group">
+                <label for="contact-name">
+                    <i class="fas fa-user"></i> Name
+                </label>
+                <input type="text" id="contact-name" name="name" required 
+                       placeholder="Contact's full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-phone">
+                    <i class="fas fa-phone"></i> Phone Number
+                </label>
+                <input type="tel" id="contact-phone" name="phone" required
+                       placeholder="Emergency contact number">
+            </div>
+            
+            <div class="form-group">
+                <label for="contact-relationship">
+                    <i class="fas fa-user-tag"></i> Relationship
+                </label>
+                <input type="text" id="contact-relationship" name="relationship" required
+                       placeholder="e.g., Family, Doctor, Caregiver">
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="submit" class="save-btn">
+                    <i class="fas fa-save"></i> Save Contact
+                </button>
+                <button type="button" class="cancel-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/emergency.js') }}"></script>
+{% endblock %} 

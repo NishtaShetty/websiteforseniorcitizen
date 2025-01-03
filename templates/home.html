@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <h1>Welcome to Granlink</h1>
+    <p>Your comprehensive healthcare management platform designed to make life easier.</p>
+</div>
+
+<div class="service-grid">
+    <div class="service-card">
+        <i class="fas fa-pills"></i>
+        <h2>Medication Reminder</h2>
+        <p>Track and manage your medications with smart reminders</p>
+    </div>
+    
+    <div class="service-card">
+        <i class="fas fa-calendar-alt"></i>
+        <h2>Appointment Scheduling</h2>
+        <p>Schedule and manage your medical appointments</p>
+    </div>
+    
+    <div class="service-card">
+        <i class="fas fa-first-aid"></i>
+        <h2>Emergency Contacts</h2>
+        <p>Quick access to your emergency contacts</p>
+    </div>
+    
+    <div class="service-card">
+        <i class="fas fa-car"></i>
+        <h2>Transportation</h2>
+        <p>Book and manage your medical transportation</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Welcome notification
+    setTimeout(() => {
+        showNotification('Welcome to Granlink! How can we help you today?', 'info');
+    }, 1000);
+});
+</script>
+{% endblock %} 

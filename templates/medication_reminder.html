@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Medication Reminder{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="service-page-header">
+        <div class="service-page-title">
+            <i class="fas fa-pills"></i>
+            <div>
+                <h1>Medication Reminder</h1>
+                <p>Track and manage your medications</p>
+            </div>
+        </div>
+        <button onclick="showAddMedicationForm()" class="add-button">
+            <i class="fas fa-plus"></i> Add Medication
+        </button>
+    </div>
+
+    <div class="medications-grid">
+        {% if medications %}
+            {% for med in medications %}
+            <div class="medication-card {% if med.taken %}taken{% endif %}" data-medication-id="{{ med.id }}">
+                <div class="medication-status">
+                    <span class="status-badge {% if med.doses_taken == med.daily_doses %}completed{% elif med.doses_taken > 0 %}partial{% else %}pending{% endif %}">
+                        {{ med.doses_taken }}/{{ med.daily_doses }} Doses
+                    </span>
+                </div>
+                
+                <div class="medication-info">
+                    <h3><i class="fas fa-capsules"></i> {{ med.name }}</h3>
+                    <div class="medication-details">
+                        <p><i class="fas fa-prescription-bottle"></i> Dosage: {{ med.dosage }}</p>
+                        <p><i class="fas fa-clock"></i> Frequency: {{ med.frequency }}</p>
+                        <p><i class="fas fa-calendar-alt"></i> Next Dose: {{ med.next_dose }}</p>
+                        <p><i class="fas fa-check-circle"></i> Doses Taken Today: {{ med.doses_taken }}/{{ med.daily_doses }}</p>
+                    </div>
+                </div>
+
+                <div class="medication-actions">
+                    {% if med.doses_taken < med.daily_doses %}
+                    <button onclick="markMedicationTaken('{{ med.id }}')" class="action-btn take-btn">
+                        <i class="fas fa-check"></i> Take Dose
+                    </button>
+                    {% endif %}
+                    <button onclick="editMedication('{{ med.id }}')" class="action-btn edit-btn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button onclick="deleteMedication('{{ med.id }}')" class="action-btn delete-btn">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-prescription-bottle-alt"></i>
+                <h3>No medications added yet</h3>
+                <p>Click the "Add Medication" button to get started</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add/Edit Medication Modal -->
+<div id="medicationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-pills"></i> Add New Medication</h2>
+            <button type="button" class="voice-input-btn" onclick="startVoiceInput()">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button type="button" class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="medicationForm" onsubmit="saveMedication(event)">
+            <input type="hidden" id="medication-id" name="id">
+            
+            <div class="form-group">
+                <label for="medication-name">
+                    <i class="fas fa-pills"></i> Medication Name
+                </label>
+                <input type="text" id="medication-name" name="name" required 
+                       placeholder="Enter medication name">
+            </div>
+            
+            <div class="form-group">
+                <label for="medication-dosage">
+                    <i class="fas fa-prescription-bottle"></i> Dosage
+                </label>
+                <input type="text" id="medication-dosage" name="dosage" required
+                       placeholder="e.g., 1 tablet, 5ml, etc.">
+            </div>
+            
+            <div class="form-group">
+                <label for="medication-frequency">
+                    <i class="fas fa-clock"></i> Frequency
+                </label>
+                <select id="medication-frequency" name="frequency" required>
+                    <option value="">Select frequency</option>
+                    <option value="daily">Once Daily</option>
+                    <option value="twice daily">Twice Daily</option>
+                    <option value="thrice daily">Three Times Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="next-dose">
+                    <i class="fas fa-calendar-alt"></i> Next Dose
+                </label>
+                <input type="datetime-local" id="next-dose" name="next_dose" required>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="submit" class="save-btn">
+                    <i class="fas fa-save"></i> Save Medication
+                </button>
+                <button type="button" class="cancel-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/medication.js') }}"></script>
+{% endblock %} 
